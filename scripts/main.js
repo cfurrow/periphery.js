@@ -63,16 +63,22 @@ function drawCentralVision(ctx,x,y) {
   // S = frontal extent linear distance (what?)
   // D = Distance from observer to the viewing object
   // Solve the triangle to get S
-  var a,b,c;
-  var A,B,C;
+  var a,b,c; // sides
+  var A,B,C; // angles
   c = y;
-  A = 60;
-  B = 90;
-  C = 30; // half of the visual field
+  A = 30 * Math.PI / 180;// half of the visual field
+  B = 90 * Math.PI / 180;
+  C = 60 * Math.PI / 180; 
 
   // law of sines => a/sin(A) = b/sin(B) = c/sin(C)
-  a = c/Math.sin(C);
-  b = Math.sin(B) * a;
+  // c/sin(C) = y/sin(60) = 300/sin(60) = 150*sqrt(3)
+  // 150*sqrt(3) = a/sin(A) 
+  // 150*sqrt(3) = a/sin(30) 
+  // 150*sqrt(3) * sin(30) = a
+  // 150*sqrt(3) * sin(30) = 129.904
+  a = (c/Math.sin(C)) * Math.sin(A);
+  b = Math.sin(B) * (a/Math.sin(A));
+  console.log("a: " + a + " b: " + b + " c: " + c);
 
   var linearVisionLength = a;
   var distanceToFarWall  = ctx.canvas.width - x; // D
@@ -95,20 +101,23 @@ document.onkeydown = function(e){
   if(e.which == 38){
     //up
     playerY -=5;
+    return false;
   }
   else if(e.which == 40){
     //down
     playerY +=5;
+    return false;
   }
   else if(e.which == 37 ){
     //left
     playerX -=5;
+    return false;
   }
   else if(e.which == 39 ){
     //right
     playerX +=5;
+    return false;
   }
-  return false;
 }
 
 function main(){
