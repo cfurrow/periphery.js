@@ -88,8 +88,8 @@ function drawCentralVision(ctx,x,y) {
   ctx.moveTo(x,y);
   // need to create a triangle, using the angle to determine 
   // how far to move the x from playerX to the left, and right
-  ctx.lineTo(x-linearVisionLength/2,0);
-  ctx.lineTo(x+linearVisionLength/2,0);
+  ctx.lineTo(x-linearVisionLength/2,10);
+  ctx.lineTo(x+linearVisionLength/2,10);
   ctx.lineTo(x,y);
 
   ctx.stroke();
