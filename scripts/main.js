@@ -87,7 +87,7 @@ function drawCentralVision(ctx,x,y,direction) {
   var triangle = solveASA(30,y,90);
 
   var linearVisionLength = triangle.a;
-  var distanceToFarWall  = ctx.canvas.width - Math.cos(direction)*x; // D
+  var distanceToFarWall  = ctx.canvas.width - x; // D
   ctx.beginPath();
 
   ctx.strokeStyle = "#ffffff";
@@ -95,8 +95,8 @@ function drawCentralVision(ctx,x,y,direction) {
   ctx.moveTo(x,y);
   // need to create a triangle, using the angle to determine 
   // how far to move the x from playerX to the left, and right
-  ctx.lineTo(Math.cos(direction)*(x-linearVisionLength/2),Math.sin(direction)*10);
-  ctx.lineTo(Math.cos(direction)*(x+linearVisionLength/2),Math.sin(direction)*10);
+  ctx.lineTo((x-linearVisionLength/2),10);
+  ctx.lineTo((x+linearVisionLength/2),10);
   ctx.lineTo(x,y);
 
   ctx.closePath();
