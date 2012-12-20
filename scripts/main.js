@@ -52,23 +52,18 @@ function drawPlayer(ctx,x,y){
   ctx.fill();
   ctx.closePath();
 
+  drawPeripheryVision(ctx,x,y);
   drawCentralVision(ctx,x,y);
 }
 
-function drawCentralVision(ctx,x,y) {
-  // V = 2arctan(S/2D)
-  // V = 2 * (cos(S/2D)/sin(S/2D))
-  // V/2 = cos(S/2D)/sin(S/2D)
-  // V = visual angle
-  // S = frontal extent linear distance (what?)
-  // D = Distance from observer to the viewing object
+function solveASA(angle1,side,angle2){
   // Solve the triangle to get S
   var a,b,c; // sides
   var A,B,C; // angles
-  c = y;
-  A = 30 * Math.PI / 180;// half of the visual field
-  B = 90 * Math.PI / 180;
-  C = 60 * Math.PI / 180; 
+  c = side;
+  A = angle1 * Math.PI / 180;// half of the visual field
+  B = angle2 * Math.PI / 180;
+  C = (180-(angle1+angle2)) * Math.PI / 180; 
 
   // law of sines => a/sin(A) = b/sin(B) = c/sin(C)
   // c/sin(C) = y/sin(60) = 300/sin(60) = 150*sqrt(3)
@@ -79,12 +74,23 @@ function drawCentralVision(ctx,x,y) {
   a = (c/Math.sin(C)) * Math.sin(A);
   b = Math.sin(B) * (a/Math.sin(A));
   console.log("a: " + a + " b: " + b + " c: " + c);
-
-  var linearVisionLength = a;
+  return {
+    A:A,
+    B:B,
+    C:C,
+    a:a,
+    b:b,
+    c:c
+  };
+}
+function drawPeripheryVision(ctx,x,y){
+  var triangle = solveASA(50,y,90);
+  var linearVisionLength = triangle.a;
   var distanceToFarWall  = ctx.canvas.width - x; // D
   ctx.beginPath();
 
-  ctx.strokeStyle = "#ffffff";
+  ctx.strokeStyle = "#dddddd";
+  ctx.fillStyle = "#dddddd";
   ctx.moveTo(x,y);
   // need to create a triangle, using the angle to determine 
   // how far to move the x from playerX to the left, and right
@@ -92,8 +98,34 @@ function drawCentralVision(ctx,x,y) {
   ctx.lineTo(x+linearVisionLength/2,10);
   ctx.lineTo(x,y);
 
-  ctx.stroke();
   ctx.closePath();
+  ctx.fill();
+}
+function drawCentralVision(ctx,x,y) {
+  // V = 2arctan(S/2D)
+  // V = 2 * (cos(S/2D)/sin(S/2D))
+  // V/2 = cos(S/2D)/sin(S/2D)
+  // V = visual angle
+  // S = frontal extent linear distance (what?)
+  // D = Distance from observer to the viewing object
+
+  var triangle = solveASA(30,y,90);
+
+  var linearVisionLength = triangle.a;
+  var distanceToFarWall  = ctx.canvas.width - x; // D
+  ctx.beginPath();
+
+  ctx.strokeStyle = "#ffffff";
+  ctx.fillStyle = "#ffffff";
+  ctx.moveTo(x,y);
+  // need to create a triangle, using the angle to determine 
+  // how far to move the x from playerX to the left, and right
+  ctx.lineTo(x-linearVisionLength/2,10);
+  ctx.lineTo(x+linearVisionLength/2,10);
+  ctx.lineTo(x,y);
+
+  ctx.closePath();
+  ctx.fill();
 }
 
 document.onkeydown = function(e){
@@ -125,4 +157,4 @@ function main(){
   drawPlayer(ctx,playerX,playerY);
 }
 
-setInterval(main,60);
+setInterval(main,100);
