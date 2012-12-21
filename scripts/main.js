@@ -141,9 +141,7 @@ function drawScene(player){
   var i = 0;
   var len = scene.length;
   for(;i<len;i++){
-    if(playerCanSee(player,scene[i])){
-      scene[i].draw();
-    }
+    scene[i].draw();
   }
 }
 
@@ -222,11 +220,6 @@ function handleMovement(player) {
   player.x = (player.x+player.radius) > ctx.canvas.width ? ctx.canvas.width-player.radius : player.x;
   player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
   player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height-player.radius : player.y;
-}
-
-function playerCanSee(player,obj){
-  // determine if the object is within the player.central or player.periphery triangles
-  return true;
 }
 
 function frame(){
