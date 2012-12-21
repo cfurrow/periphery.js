@@ -14,7 +14,7 @@ var player = {
   x:width/2-radius, 
   y:height/2-radius, 
   direction:90*Math.PI/180, 
-  visionRadius: canvas.width+100,
+  visionRadius: canvas.width*2,
   radius:radius,
   velocity:5,
   turningLeft:false,
@@ -73,38 +73,29 @@ function solveASA(angle1,side,angle2){
 }
 
 function drawPeripheryVision(ctx,player){
-  var x = player.x;
-  var y = player.y;
-  var direction = player.direction;
-
   ctx.beginPath();
 
   ctx.strokeStyle = "#dddddd";
   ctx.fillStyle = "#dddddd";
 
-  ctx.moveTo(x,y);
+  ctx.moveTo(player.x,player.y);
 
-  var newX = player.x + player.visionRadius*Math.cos(player.direction - (50*Math.PI/180));
-  var newY = player.y + player.visionRadius*Math.sin(player.direction - (50*Math.PI/180));
+  var trianglePointX = player.x + player.visionRadius*Math.cos(player.direction - (50*Math.PI/180));
+  var trianglePointY = player.y + player.visionRadius*Math.sin(player.direction - (50*Math.PI/180));
 
-  ctx.lineTo(newX,newY);
+  ctx.lineTo(trianglePointX,trianglePointY);
 
-  newX = player.x + player.visionRadius*Math.cos(player.direction + (50*Math.PI/180));
-  newY = player.y + player.visionRadius*Math.sin(player.direction + (50*Math.PI/180));
-  ctx.lineTo(newX,newY);
-  ctx.lineTo(x,y);
+  trianglePointX = player.x + player.visionRadius*Math.cos(player.direction + (50*Math.PI/180));
+  trianglePointY = player.y + player.visionRadius*Math.sin(player.direction + (50*Math.PI/180));
+
+  ctx.lineTo(trianglePointX,trianglePointY);
+  ctx.lineTo(player.x,player.y);
 
   ctx.closePath();
   ctx.fill();
 }
 
 function drawCentralVision(ctx,player) {
-  // V = 2arctan(S/2D)
-  // V = 2 * (cos(S/2D)/sin(S/2D))
-  // V/2 = cos(S/2D)/sin(S/2D)
-  // V = visual angle
-  // S = frontal extent linear distance (what?)
-  // D = Distance from observer to the viewing object
   var x = player.x;
   var y = player.y;
   var direction = player.direction;
@@ -115,14 +106,14 @@ function drawCentralVision(ctx,player) {
   ctx.fillStyle = "#ffffff";
   ctx.moveTo(x,y);
 
-  var newX = player.x + player.visionRadius*Math.cos(player.direction - (15*Math.PI/180));
-  var newY = player.y + player.visionRadius*Math.sin(player.direction - (15*Math.PI/180));
+  var trianglePointX = player.x + player.visionRadius*Math.cos(player.direction - (15*Math.PI/180));
+  var trianglePointY = player.y + player.visionRadius*Math.sin(player.direction - (15*Math.PI/180));
 
-  ctx.lineTo(newX,newY);
+  ctx.lineTo(trianglePointX,trianglePointY);
 
-  newX = player.x + player.visionRadius*Math.cos(player.direction + (15*Math.PI/180));
-  newY = player.y + player.visionRadius*Math.sin(player.direction + (15*Math.PI/180));
-  ctx.lineTo(newX,newY);
+  trianglePointX = player.x + player.visionRadius*Math.cos(player.direction + (15*Math.PI/180));
+  trianglePointY = player.y + player.visionRadius*Math.sin(player.direction + (15*Math.PI/180));
+  ctx.lineTo(trianglePointX,trianglePointY);
   ctx.lineTo(x,y);
 
   ctx.closePath();
@@ -130,26 +121,24 @@ function drawCentralVision(ctx,player) {
 }
 
 document.onkeydown = function(e){
-  var movement = false;
+  var movement=false;
   if(e.which == 38){
-    movement=true;
     player.movingForward=true;
+    movement=true;
   }
   if(e.which == 40){
-    movement=true;
     player.movingBack=true;
+    movement=true;
   }
   if(e.which == 37 ){
-    movement=true;
     player.turningLeft=true;
+    movement=true;
   }
   if(e.which == 39 ){
-    movement=true;
     player.turningRight=true;
+    movement=true;
   }
-  if(movement){
-    return false; // don't bubble event
-  }
+  return !movement; // don't bubble event
 }
 document.onkeyup = function(e){
   if(e.which == 38){
@@ -164,6 +153,7 @@ document.onkeyup = function(e){
   if(e.which==39){
     player.turningRight=false;
   }
+  return false; // don't bubble event
 }
 
 var requestAnimationFrame = window.requestAnimationFrame ||
@@ -186,9 +176,9 @@ function handleMovement(player) {
     player.direction -= (5*Math.PI/180);
   }
   player.x = (player.x-player.radius) < 0 ? player.radius : player.x;
-  player.x = (player.x+player.radus) > ctx.canvas.width ? ctx.canvas.width : player.x;
+  player.x = (player.x+player.radius) > ctx.canvas.width ? ctx.canvas.width-player.radius : player.x;
   player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
-  player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height : player.y;
+  player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height-player.radius : player.y;
 }
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
