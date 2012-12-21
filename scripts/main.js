@@ -101,7 +101,7 @@ function drawPlayer(ctx,player){
 function drawPeripheryVision(ctx,player){
   ctx.beginPath();
 
-  ctx.fillStyle = "rgba(10,10,10,0.9)";
+  ctx.fillStyle = "rgba(20,20,20,0.9)";
   player.periphery = [];
 
   ctx.moveTo(player.x,player.y);
