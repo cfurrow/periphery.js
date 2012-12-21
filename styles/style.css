@@ -4,3 +4,19 @@ body{
   color:#333;
   margin:20px;
 }
+#c{
+  background-color:#333;
+}
+
+.span4{
+  width:40%;
+  float:left;
+}
+.span6:{
+  width:60%;
+  float:left;
+}
+
+.clear{
+  clear:both;
+}
