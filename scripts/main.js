@@ -75,7 +75,7 @@ function drawPlayer(ctx,player){
   ctx.fill();
   ctx.closePath();
 
-  //drawPeripheryVision(ctx,player);
+  drawPeripheryVision(ctx,player);
   drawCentralVision(ctx,player);
 }
 
