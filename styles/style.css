@@ -7,14 +7,10 @@ body{
 #c{
   background-color:#333;
 }
-
-.span4{
-  width:40%;
-  float:left;
-}
-.span6:{
-  width:60%;
-  float:left;
+.container
+{
+  width:70%;
+  margin:auto;
 }
 
 .clear{

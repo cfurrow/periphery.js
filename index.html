@@ -8,17 +8,19 @@
     <link rel="stylesheet" href="styles/style.css" type="text/css" />
   </head>
   <body>
-    <div class="span4">
-      <h1>Periphery.js by Carl Furrow</h1> 
-      <p>
-      This project demos HTML5 Canvas 2D and clipping objects with other objects. In this case,
-      it's clipping other scene elements with an emulation of the player's view-field cone. You can 
-      rotate your vision with the left/right keys, and move in the direction you're facing with the up
-      key, or move in the opposite direction with the down key.
-      </p>
+    <div class='container'>
+      <div>
+        <h1>Periphery.js by Carl Furrow</h1> 
+        <p>
+        This project demos HTML5 Canvas 2D and clipping objects with other objects. In this case,
+        it's clipping other scene elements with an emulation of the player's view-field cone. You can 
+        rotate your vision with the left/right keys, and move in the direction you're facing with the up
+        key, or move in the opposite direction with the down key.
+        </p>
+      </div>
+      <div class="clear"></div>
+      <canvas id='c' width="900" height="600"/>
     </div>
-    <canvas class="span6" id='c' width="800" height="600"/>
-    <div class="clear"></div>
     <script type="text/javascript" charset="utf-8">
       window.fillWindow=false;    
     </script>
