@@ -7,6 +7,7 @@ var width  = 0;
 var height = 0;
 var scene  = []
 var fillWindow = fillWindow === false ? false : true;
+var shadows = true;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -30,39 +31,45 @@ var player = {
   central:  [[0,0],[0,0],[0,0]]
 };
 
-scene.push({
-  x: 10,
-  y: 10,
-  width: 50,
-  height: 50,
-  fillStyle: 'rgb(255,0,0)',
-  draw:function(){
+var Shape = function(px,py){
+  this.x = px;
+  this.y = py;
+  this.draw = function(){};
+};
+
+var Rectangle = function(x,y,w,h,fill){
+  Shape.apply(this,arguments);
+  this.width  = w;
+  this.height = h;
+  this.fillStyle = fill;
+
+  this.draw = function(player){
     ctx.fillStyle = this.fillStyle;
     ctx.fillRect(this.x,this.y,this.width,this.height);
-  }
-});
-scene.push({
-  x: 400,
-  y: 400,
-  width: 30,
-  height: 30,
-  fillStyle: 'rgb(0,255,0)',
-  draw:function(){
+  };
+};
+var Circle   = function(x,y,r,fill){
+  Shape.apply(this,arguments);
+  this.radius    = r;
+  this.fillStyle = fill;
+
+  this.draw = function(player){
+    ctx.save();
     ctx.fillStyle = this.fillStyle;
-    ctx.fillRect(this.x,this.y,this.width,this.height);
-  }
-});
-scene.push({
-  x: 500,
-  y: 10,
-  width: 90,
-  height: 90,
-  fillStyle: 'rgb(0,0,255)',
-  draw:function(){
-    ctx.fillStyle = this.fillStyle;
-    ctx.fillRect(this.x,this.y,this.width,this.height);
-  }
-});
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+};
+Rectangle.prototype = new Shape();
+Circle.prototype   = new Shape();
+
+scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
+scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
+scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)'));
+scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
 
 function deg2rad(degree) {
   return degree * Math.PI / 180;
@@ -156,7 +163,7 @@ function drawScene(player){
   var i = 0;
   var len = scene.length;
   for(;i<len;i++){
-    scene[i].draw();
+    scene[i].draw(player);
   }
 }
 
