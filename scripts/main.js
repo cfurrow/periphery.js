@@ -7,7 +7,7 @@ var FPS    = 60;
 var width  = 0;
 var height = 0;
 var scene  = []
-var fillWindow = fillWindow || true;
+var fillWindow = fillWindow === false ? false : true;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
