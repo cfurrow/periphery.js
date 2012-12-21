@@ -155,6 +155,13 @@ document.onkeyup = function(e){
   }
   return false; // don't bubble event
 }
+window.onresize = function(){
+  canvas.height = window.innerHeight;
+  canvas.width  = window.innerWidth; 
+  width  = canvas.width;
+  height = canvas.height;
+  player.visionRadius = canvas.width*2;
+}
 
 var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
