@@ -1,4 +1,5 @@
 // Create an image element
+var FPS = 30;
 var canvas = document.getElementById('c');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -8,14 +9,20 @@ var img    = document.createElement('IMG');
 var width  = canvas.width;
 var height = canvas.height;
 var radius = 10;
-var playerX;
-var playerY;
-var playerDirection = (90*Math.PI)/180;
-playerX = width/2-radius;
-playerY = height/2-radius;
+
+var player = {
+  x:width/2-radius, 
+  y:height/2-radius, 
+  direction:90*Math.PI/180, 
+  visionRadius: canvas.width+100
+};
 
 
-function drawPlayer(ctx,x,y,direction){
+function drawPlayer(ctx,player){
+  var x = player.x;
+  var y = player.y;
+  var direction = player.direction;
+
   ctx.beginPath();
   ctx.fillStyle = "#ffffff";
   ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
@@ -28,8 +35,8 @@ function drawPlayer(ctx,x,y,direction){
   ctx.fill();
   ctx.closePath();
 
-  drawPeripheryVision(ctx,x,y,direction);
-  drawCentralVision(ctx,x,y,direction);
+  drawPeripheryVision(ctx,player);
+  drawCentralVision(ctx,player);
 }
 
 function solveASA(angle1,side,angle2){
@@ -58,31 +65,51 @@ function solveASA(angle1,side,angle2){
     c:c
   };
 }
-function drawPeripheryVision(ctx,x,y,direction){
-  var triangle = solveASA(50,y,90);
-  var linearVisionLength = triangle.a;
-  var distanceToFarWall  = ctx.canvas.width - x*Math.cos(direction); // D
+
+function drawPeripheryVision(ctx,player){
+  var x = player.x;
+  var y = player.y;
+  var direction = player.direction;
+
+  //var triangle = solveASA(50,y,90);
+  //var linearVisionLength = triangle.a;
+  //var distanceToFarWall  = ctx.canvas.width - x*Math.cos(direction); // D
   ctx.beginPath();
 
   ctx.strokeStyle = "#dddddd";
   ctx.fillStyle = "#dddddd";
+
   ctx.moveTo(x,y);
-  // need to create a triangle, using the angle to determine 
-  // how far to move the x from playerX to the left, and right
-  ctx.lineTo(x-linearVisionLength/2,10);
-  ctx.lineTo(x+linearVisionLength/2,10);
+  // use player.visionRadius to know the circle we're in.
+  // use player.direction to know the current degree/radian we're facing
+  //   * from there, we know we have to go -50deg to the left and +50deg to the right
+  // player.target gets updated with each left/right press
+
+  var newX = player.x + player.visionRadius*Math.cos(player.direction - (50*Math.PI/180));
+  var newY = player.y + player.visionRadius*Math.sin(player.direction - (50*Math.PI/180));
+
+  ctx.lineTo(newX,newY);
+  //ctx.lineTo(x-linearVisionLength/2,10);
+
+  newX = player.x + player.visionRadius*Math.cos(player.direction + (50*Math.PI/180));
+  newY = player.y + player.visionRadius*Math.sin(player.direction + (50*Math.PI/180));
+  ctx.lineTo(newX,newY);
   ctx.lineTo(x,y);
 
   ctx.closePath();
   ctx.fill();
 }
-function drawCentralVision(ctx,x,y,direction) {
+
+function drawCentralVision(ctx,player) {
   // V = 2arctan(S/2D)
   // V = 2 * (cos(S/2D)/sin(S/2D))
   // V/2 = cos(S/2D)/sin(S/2D)
   // V = visual angle
   // S = frontal extent linear distance (what?)
   // D = Distance from observer to the viewing object
+  var x = player.x;
+  var y = player.y;
+  var direction = player.direction;
 
   var triangle = solveASA(30,y,90);
 
@@ -95,9 +122,18 @@ function drawCentralVision(ctx,x,y,direction) {
   ctx.moveTo(x,y);
   // need to create a triangle, using the angle to determine 
   // how far to move the x from playerX to the left, and right
-  ctx.lineTo((x-linearVisionLength/2),10);
-  ctx.lineTo((x+linearVisionLength/2),10);
+  var newX = player.x + player.visionRadius*Math.cos(player.direction - (15*Math.PI/180));
+  var newY = player.y + player.visionRadius*Math.sin(player.direction - (15*Math.PI/180));
+
+  ctx.lineTo(newX,newY);
+  //ctx.lineTo(x-linearVisionLength/2,10);
+
+  newX = player.x + player.visionRadius*Math.cos(player.direction + (15*Math.PI/180));
+  newY = player.y + player.visionRadius*Math.sin(player.direction + (15*Math.PI/180));
+  ctx.lineTo(newX,newY);
   ctx.lineTo(x,y);
+
+  //console.log("Central Vision: {"+x+","+y+"},{"+(x-linearVisionLength/2)+","+10+"},{"+(x+linearVisionLength/2)+","+10+"}");
 
   ctx.closePath();
   ctx.fill();
@@ -106,33 +142,39 @@ function drawCentralVision(ctx,x,y,direction) {
 document.onkeydown = function(e){
   if(e.which == 38){
     //up
-    playerY -=5;
+    player.y -=5;
     return false;
   }
   else if(e.which == 40){
     //down
-    playerY +=5;
+    player.y +=5;
     return false;
   }
   else if(e.which == 37 ){
     //left
     //playerX -=5;
-    playerDirection += (5*Math.PI/180);
+    player.direction += (5*Math.PI/180);
     return false;
   }
   else if(e.which == 39 ){
     //right
-    playerDirection -= (5*Math.PI/180);
+    player.direction -= (5*Math.PI/180);
     return false;
   }
 }
 
-function main(){
+var requestAnimationFrame = window.requestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            function(func) { setTimeout(func, 1000 / FPS); }
+function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  drawPlayer(ctx,playerX,playerY,playerDirection);
+  drawPlayer(ctx,player);
+  requestAnimationFrame(frame);
 }
+requestAnimationFrame(frame);
 
-setInterval(main,100);
+//setInterval(frame,500);
 
 // When the image is loaded, draw it
 // Pulled from: http://blog.teamtreehouse.com/create-vector-masks-using-the-html5-canvas
@@ -157,7 +199,6 @@ img.onload = function () {
   ctx.drawImage(img, 0, 0);
   // Undo the clipping
   ctx.restore();
-  //drawPlayer(ctx,playerX,playerY);
 }
 
 // Specify the src to load the image
