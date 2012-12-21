@@ -1,4 +1,3 @@
-// Create an image element
 var canvas = document.getElementById('c');
 var ctx    = canvas.getContext('2d');
 var img    = document.createElement('IMG');
