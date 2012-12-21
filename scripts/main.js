@@ -14,7 +14,9 @@ var player = {
   x:width/2-radius, 
   y:height/2-radius, 
   direction:90*Math.PI/180, 
-  visionRadius: canvas.width+100
+  visionRadius: canvas.width+100,
+  radius:radius,
+  velocity:5
 };
 
 
@@ -71,19 +73,12 @@ function drawPeripheryVision(ctx,player){
   var y = player.y;
   var direction = player.direction;
 
-  //var triangle = solveASA(50,y,90);
-  //var linearVisionLength = triangle.a;
-  //var distanceToFarWall  = ctx.canvas.width - x*Math.cos(direction); // D
   ctx.beginPath();
 
   ctx.strokeStyle = "#dddddd";
   ctx.fillStyle = "#dddddd";
 
   ctx.moveTo(x,y);
-  // use player.visionRadius to know the circle we're in.
-  // use player.direction to know the current degree/radian we're facing
-  //   * from there, we know we have to go -50deg to the left and +50deg to the right
-  // player.target gets updated with each left/right press
 
   var newX = player.x + player.visionRadius*Math.cos(player.direction - (50*Math.PI/180));
   var newY = player.y + player.visionRadius*Math.sin(player.direction - (50*Math.PI/180));
@@ -111,55 +106,57 @@ function drawCentralVision(ctx,player) {
   var y = player.y;
   var direction = player.direction;
 
-  var triangle = solveASA(30,y,90);
-
-  var linearVisionLength = triangle.a;
-  var distanceToFarWall  = ctx.canvas.width - x; // D
   ctx.beginPath();
 
   ctx.strokeStyle = "#ffffff";
   ctx.fillStyle = "#ffffff";
   ctx.moveTo(x,y);
-  // need to create a triangle, using the angle to determine 
-  // how far to move the x from playerX to the left, and right
+
   var newX = player.x + player.visionRadius*Math.cos(player.direction - (15*Math.PI/180));
   var newY = player.y + player.visionRadius*Math.sin(player.direction - (15*Math.PI/180));
 
   ctx.lineTo(newX,newY);
-  //ctx.lineTo(x-linearVisionLength/2,10);
 
   newX = player.x + player.visionRadius*Math.cos(player.direction + (15*Math.PI/180));
   newY = player.y + player.visionRadius*Math.sin(player.direction + (15*Math.PI/180));
   ctx.lineTo(newX,newY);
   ctx.lineTo(x,y);
 
-  //console.log("Central Vision: {"+x+","+y+"},{"+(x-linearVisionLength/2)+","+10+"},{"+(x+linearVisionLength/2)+","+10+"}");
-
   ctx.closePath();
   ctx.fill();
 }
 
 document.onkeydown = function(e){
+  var movement = false;
   if(e.which == 38){
-    //up
-    player.y -=5;
-    return false;
+    movement=true;
+    //forward
+    player.y += player.velocity * Math.sin(player.direction);
+    player.x += player.velocity * Math.cos(player.direction);
   }
   else if(e.which == 40){
-    //down
-    player.y +=5;
-    return false;
+    movement=true;
+    //backward
+    player.y -= player.velocity * Math.sin(player.direction);
+    player.x -= player.velocity * Math.cos(player.direction);
   }
   else if(e.which == 37 ){
+    movement=true;
     //left
     //playerX -=5;
     player.direction += (5*Math.PI/180);
-    return false;
   }
   else if(e.which == 39 ){
+    movement=true;
     //right
     player.direction -= (5*Math.PI/180);
-    return false;
+  }
+  if(movement){
+    player.x = (player.x-player.radius) < 0 ? player.radius : player.x;
+    player.x = (player.x+player.radus) > ctx.canvas.width ? ctx.canvas.width : player.x;
+    player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
+    player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height : player.y;
+    return false; // don't bubble event
   }
 }
 
