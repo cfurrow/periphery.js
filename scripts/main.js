@@ -7,6 +7,7 @@ var width  = 0;
 var height = 0;
 var scene  = []
 var fillWindow = fillWindow === false ? false : true;
+var shadows = false;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -43,8 +44,31 @@ var Rectangle = function(x,y,w,h,fill){
   this.fillStyle = fill;
 
   this.draw = function(player){
+    ctx.save();
     ctx.fillStyle = this.fillStyle;
     ctx.fillRect(this.x,this.y,this.width,this.height);
+    ctx.restore();
+
+    // Need to pick extreme points. closest and furthest, and it must be 2.
+    if(shadows){
+      var shadowx, shadowy;
+      ctx.fillStyle = 'rgba(0,0,0,1)';
+      ctx.beginPath();
+      ctx.moveTo(this.x,this.y);
+
+      shadowx = this.x + player.visionRadius*Math.cos(player.direction);
+      shadowy = this.y + player.visionRadius*Math.sin(player.direction);
+
+      ctx.lineTo(shadowx,shadowy);
+
+      shadowx = this.x+this.width  + player.visionRadius*Math.cos(player.direction);
+      shadowy = this.y+this.height + player.visionRadius*Math.sin(player.direction);
+      ctx.lineTo(shadowx,shadowy);
+
+      ctx.lineTo(this.x+this.width,this.y+this.height);
+      ctx.closePath();
+      ctx.fill();
+    }
   };
 };
 var Circle   = function(x,y,r,fill){
@@ -63,7 +87,7 @@ var Circle   = function(x,y,r,fill){
   };
 };
 Rectangle.prototype = new Shape();
-Circle.prototype   = new Shape();
+Circle.prototype    = new Shape();
 
 scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
 scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
@@ -73,6 +97,7 @@ scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
 function deg2rad(degree) {
   return degree * Math.PI / 180;
 }
+
 function rad2deg(radian){
   return radian * (180/Math.PI);
 }
