@@ -7,9 +7,12 @@ var FPS    = 60;
 var width  = 0;
 var height = 0;
 var scene  = []
+var fillWindow = fillWindow || true;
 
-canvas.width  = window.innerWidth;
-canvas.height = window.innerHeight;
+if(fillWindow){
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
 width         = canvas.width;
 height        = canvas.height;
 
@@ -187,11 +190,13 @@ document.onkeyup = function(e){
 }
 
 window.onresize = function(){
-  canvas.height = window.innerHeight;
-  canvas.width  = window.innerWidth; 
-  width  = canvas.width;
-  height = canvas.height;
-  player.visionRadius = canvas.width*2;
+  if(fillWindow){
+    canvas.height = window.innerHeight;
+    canvas.width  = window.innerWidth; 
+    width  = canvas.width;
+    height = canvas.height;
+    player.visionRadius = canvas.width*2;
+  }
 }
 
 var requestAnimationFrame = window.requestAnimationFrame ||
