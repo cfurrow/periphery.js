@@ -52,6 +52,17 @@ scene.push({
     ctx.fillRect(this.x,this.y,this.width,this.height);
   }
 });
+scene.push({
+  x: 500,
+  y: 10,
+  width: 90,
+  height: 90,
+  fillStyle: 'rgb(0,0,255)',
+  draw:function(){
+    ctx.fillStyle = this.fillStyle;
+    ctx.fillRect(this.x,this.y,this.width,this.height);
+  }
+});
 
 function deg2rad(degree) {
   return degree * Math.PI / 180;
@@ -65,6 +76,7 @@ function drawPlayer(ctx,player){
   var y = player.y;
   var direction = player.direction;
 
+  ctx.globalCompositeOperation = 'desination-over';
   ctx.beginPath();
   ctx.fillStyle = "#ffffff";
   ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
@@ -77,16 +89,19 @@ function drawPlayer(ctx,player){
   ctx.fill();
   ctx.closePath();
 
+  ctx.globalCompositeOperation = 'darker';
   drawPeripheryVision(ctx,player);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
   drawCentralVision(ctx,player);
+  ctx.restore();
 }
 
-
 function drawPeripheryVision(ctx,player){
-  ctx.save();
   ctx.beginPath();
 
-  ctx.fillStyle = "rgba(240,240,240,0.1)";
+  ctx.fillStyle = "rgba(10,10,10,0.9)";
   player.periphery = [];
 
   ctx.moveTo(player.x,player.y);
@@ -107,13 +122,13 @@ function drawPeripheryVision(ctx,player){
   ctx.lineTo(player.x,player.y);
   ctx.closePath();
   ctx.fill();
-  ctx.restore();
+  ctx.clip();
 }
 
 function drawCentralVision(ctx,player) {
   ctx.beginPath();
 
-  ctx.fillStyle = "rgba(200,200,200,0.1)";
+  ctx.fillStyle = "rgba(200,200,200,0.5)";
   ctx.moveTo(player.x,player.y);
 
   player.central = [];
@@ -228,6 +243,8 @@ function frame(){
   handleMovement(player);
 
   ctx.save();
+
+  //ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
   ctx.restore();
@@ -235,5 +252,4 @@ function frame(){
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-
 
