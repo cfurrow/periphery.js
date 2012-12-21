@@ -1,7 +1,7 @@
 // Create an image element
 var FPS = 30;
-var canvas = document.getElementById('c');
-canvas.width = window.innerWidth;
+var canvas    = document.getElementById('c');
+canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 
 var ctx    = canvas.getContext('2d');
@@ -16,7 +16,11 @@ var player = {
   direction:90*Math.PI/180, 
   visionRadius: canvas.width+100,
   radius:radius,
-  velocity:5
+  velocity:5,
+  turningLeft:false,
+  turningRight:false,
+  movingForward:false,
+  movingBack:false
 };
 
 
@@ -84,7 +88,6 @@ function drawPeripheryVision(ctx,player){
   var newY = player.y + player.visionRadius*Math.sin(player.direction - (50*Math.PI/180));
 
   ctx.lineTo(newX,newY);
-  //ctx.lineTo(x-linearVisionLength/2,10);
 
   newX = player.x + player.visionRadius*Math.cos(player.direction + (50*Math.PI/180));
   newY = player.y + player.visionRadius*Math.sin(player.direction + (50*Math.PI/180));
@@ -130,33 +133,36 @@ document.onkeydown = function(e){
   var movement = false;
   if(e.which == 38){
     movement=true;
-    //forward
-    player.y += player.velocity * Math.sin(player.direction);
-    player.x += player.velocity * Math.cos(player.direction);
+    player.movingForward=true;
   }
-  else if(e.which == 40){
+  if(e.which == 40){
     movement=true;
-    //backward
-    player.y -= player.velocity * Math.sin(player.direction);
-    player.x -= player.velocity * Math.cos(player.direction);
+    player.movingBack=true;
   }
-  else if(e.which == 37 ){
+  if(e.which == 37 ){
     movement=true;
-    //left
-    //playerX -=5;
-    player.direction += (5*Math.PI/180);
+    player.turningLeft=true;
   }
-  else if(e.which == 39 ){
+  if(e.which == 39 ){
     movement=true;
-    //right
-    player.direction -= (5*Math.PI/180);
+    player.turningRight=true;
   }
   if(movement){
-    player.x = (player.x-player.radius) < 0 ? player.radius : player.x;
-    player.x = (player.x+player.radus) > ctx.canvas.width ? ctx.canvas.width : player.x;
-    player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
-    player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height : player.y;
     return false; // don't bubble event
+  }
+}
+document.onkeyup = function(e){
+  if(e.which == 38){
+    player.movingForward=false;
+  }
+  if(e.which==40){
+    player.movingBack=false;
+  }
+  if(e.which==37){
+    player.turningLeft=false;
+  }
+  if(e.which==39){
+    player.turningRight=false;
   }
 }
 
@@ -164,39 +170,32 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             function(func) { setTimeout(func, 1000 / FPS); }
+function handleMovement(player) {
+  if(player.movingForward){
+    player.y += player.velocity * Math.sin(player.direction);
+    player.x += player.velocity * Math.cos(player.direction);
+  }
+  if(player.movingBack){
+    player.y -= player.velocity * Math.sin(player.direction);
+    player.x -= player.velocity * Math.cos(player.direction);
+  }
+  if(player.turningRight){
+    player.direction += (5*Math.PI/180);
+  }
+  if(player.turningLeft){
+    player.direction -= (5*Math.PI/180);
+  }
+  player.x = (player.x-player.radius) < 0 ? player.radius : player.x;
+  player.x = (player.x+player.radus) > ctx.canvas.width ? ctx.canvas.width : player.x;
+  player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
+  player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height : player.y;
+}
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  handleMovement(player);
   drawPlayer(ctx,player);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-//setInterval(frame,500);
 
-// When the image is loaded, draw it
-// Pulled from: http://blog.teamtreehouse.com/create-vector-masks-using-the-html5-canvas
-img.onload = function () {
-  // Save the state, so we can undo the clipping
-  ctx.save();   
-  // Create a shape, of some sort
-  ctx.beginPath();
-  ctx.moveTo(10, 10);
-  ctx.lineTo(100, 30);
-  ctx.lineTo(180, 10);
-  ctx.lineTo(200, 60);
-  ctx.arcTo(180, 70, 120, 0, 10);
-  ctx.lineTo(200, 180);
-  ctx.lineTo(100, 150);
-  ctx.lineTo(70, 180);
-  ctx.lineTo(20, 130);
-  ctx.lineTo(50, 70);
-  ctx.closePath();
-  // Clip to the current path
-  ctx.clip();
-  ctx.drawImage(img, 0, 0);
-  // Undo the clipping
-  ctx.restore();
-}
-
-// Specify the src to load the image
-//img.src = "http://i.imgur.com/gwlPu.jpg";
