@@ -89,10 +89,64 @@ var Circle   = function(x,y,r,fill){
 Rectangle.prototype = new Shape();
 Circle.prototype    = new Shape();
 
+var MovingCircle = function(x,y,r,fill){
+  Circle.apply(this,arguments);
+  this.velocity = 5;
+  this.movingdown  = false;
+  this.movingup    = true;
+  this.movingright = false;
+  this.movingleft  = true;
+
+  this.move = function(){
+    if(this.movingleft){
+      this.x -= this.velocity;
+    }
+    if(this.movingright){
+      this.x += this.velocity;
+    }
+    if(this.movingup){
+      this.y -= this.velocity;
+    }
+    if(this.movingdown){
+      this.y += this.velocity;
+    }
+
+    if(this.x < this.radius){
+      this.movingleft=false;
+      this.movingright=true;
+    }
+    if(this.x > ctx.canvas.width - this.radius){
+      this.movingright=false;
+      this.movingleft=true;
+    }
+    if(this.y < this.radius){
+      this.movingup = false;
+      this.movingdown = true;
+    }
+    if(this.y > ctx.canvas.height - this.radius){
+      this.movingup = true;
+      this.movingdown = false;
+    }
+  }
+
+  this.draw = function(player){
+    this.move();
+    ctx.save();
+    ctx.fillStyle = this.fillStyle;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+}
+MovingCircle.prototype = new Circle();
+
 scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
 scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
 scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)'));
 scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
+scene.push(new MovingCircle(90,300,30,'rgb(255,100,0)'));
 
 function deg2rad(degree) {
   return degree * Math.PI / 180;
