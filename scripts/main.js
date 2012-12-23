@@ -7,7 +7,7 @@ var width  = 0;
 var height = 0;
 var scene  = []
 var fillWindow = fillWindow === false ? false : true;
-var shadows = false;
+var shadows = true;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -49,25 +49,44 @@ var Rectangle = function(x,y,w,h,fill){
     ctx.fillRect(this.x,this.y,this.width,this.height);
     ctx.restore();
 
-    // Need to pick extreme points. closest and furthest, and it must be 2.
     if(shadows){
-      var shadowx, shadowy;
-      ctx.fillStyle = 'rgba(0,0,0,1)';
+      var xx, yy;
+      ctx.strokeStyle = '#000000';
+
       ctx.beginPath();
       ctx.moveTo(this.x,this.y);
-
-      shadowx = this.x + player.visionRadius*Math.cos(player.direction);
-      shadowy = this.y + player.visionRadius*Math.sin(player.direction);
-
-      ctx.lineTo(shadowx,shadowy);
-
-      shadowx = this.x+this.width  + player.visionRadius*Math.cos(player.direction);
-      shadowy = this.y+this.height + player.visionRadius*Math.sin(player.direction);
-      ctx.lineTo(shadowx,shadowy);
-
-      ctx.lineTo(this.x+this.width,this.y+this.height);
+      //todo: don't use player.visionradius, get distance to edge based on player.direction
+      //xx = this.x + player.visionRadius * Math.cos(player.direction);
+      //yy = this.y + player.visionRadius * Math.sin(player.direction);
+      xx = this.x + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = this.y + player.visionRadius * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
       ctx.closePath();
-      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(this.x+this.width,this.y);
+      xx = (this.x+this.width) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = this.y + player.visionRadius * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(this.x+this.width,this.y+this.height);
+      xx = (this.x+this.width) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = (this.y+this.height) + player.visionRadius * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(this.x,this.y+this.height);
+      xx = (this.x) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = (this.y+this.height) + player.visionRadius * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
+      ctx.closePath();
+      ctx.stroke();
     }
   };
 };
@@ -146,8 +165,30 @@ scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
 scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
 scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)'));
 scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
-scene.push(new MovingCircle(90,300,30,'rgb(255,100,0)'));
+scene.push(new MovingCircle(90,300,30,'rgb(10,200,250)'));
 
+function distanceToClosestWallX(x,direction)
+{
+  if( deg2rad(direction) > 0 && deg2rad(direction) < deg2rad(90) ){
+    return ctx.canvas.width;
+  }
+  if( deg2rad(direction) > 270 && deg2rad(direction) < deg2rad(360)){
+    return ctx.canvas.width;
+  }
+  if( deg2rad(direction) > 90 && deg2rad(direction) < deg2rad(270) ){
+    return 0;
+  }
+  return x;
+}
+function distanceToClosestWallY(y,direction){
+  if( deg2rad(direction) > deg2rad(235) && deg2rad(direction) < deg2rad(315)){
+    return 0;
+  }
+  if( deg2rad(direction) > 45 && deg2rad(direction) < deg2rad(135)) {
+    return ctx.canvas.height;
+  }
+  return y
+}
 function deg2rad(degree) {
   return degree * Math.PI / 180;
 }
@@ -308,9 +349,15 @@ function handleMovement(player) {
   }
   if(player.turningRight){
     player.direction += deg2rad(player.velocity);
+    if(player.direction > deg2rad(360)){
+      player.direction = 0;
+    }
   }
   if(player.turningLeft){
     player.direction -= deg2rad(player.velocity);
+    if(player.direction < deg2rad(0)){
+      player.direction = deg2rad(360);
+    }
   }
   player.x = (player.x-player.radius) < 0 ? player.radius : player.x;
   player.x = (player.x+player.radius) > ctx.canvas.width ? ctx.canvas.width-player.radius : player.x;
@@ -328,9 +375,15 @@ function frame(){
   handleMovement(player);
 
   ctx.save();
+  //ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
+
   ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '20pt Helvetica';
+  ctx.fillText(rad2deg(player.direction),10,20);
 
   requestAnimationFrame(frame);
 }
