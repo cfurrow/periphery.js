@@ -77,33 +77,6 @@ function rad2deg(radian){
   return radian * (180/Math.PI);
 }
 
-function drawPlayer(ctx,player){
-  var x = player.x;
-  var y = player.y;
-  var direction = player.direction;
-
-  //ctx.globalCompositeOperation = 'desination-over';
-  ctx.beginPath();
-  ctx.fillStyle = "#ffffff";
-  ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
-  ctx.fill();
-  ctx.closePath();
-
-  ctx.beginPath();
-  ctx.fillStyle = "#5e9fd2";
-  ctx.arc(x,y, radius, 0, Math.PI*2, false);
-  ctx.fill();
-  ctx.closePath();
-
-  ctx.globalCompositeOperation = 'xor';
-  drawPeripheryVision(ctx,player);
-
-  ctx.save();
-  ctx.globalCompositeOperation = 'xor';
-  drawCentralVision(ctx,player);
-  ctx.restore();
-}
-
 function drawPeripheryVision(ctx,player){
   ctx.beginPath();
 
@@ -157,6 +130,33 @@ function drawCentralVision(ctx,player) {
   ctx.fill();
   ctx.clip();
 }
+
+function drawPlayer(ctx,player){
+  var x = player.x;
+  var y = player.y;
+  var direction = player.direction;
+
+  ctx.beginPath();
+  ctx.fillStyle = "#ffffff";
+  ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.fillStyle = "#5e9fd2";
+  ctx.arc(x,y, radius, 0, Math.PI*2, false);
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.globalCompositeOperation = 'xor';
+  drawPeripheryVision(ctx,player);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'xor';
+  drawCentralVision(ctx,player);
+  ctx.restore();
+}
+
 
 function drawScene(player){
   var i = 0;
@@ -217,10 +217,6 @@ window.onresize = function(){
   }
 }
 
-var requestAnimationFrame = window.requestAnimationFrame ||
-                            window.webkitRequestAnimationFrame ||
-                            window.mozRequestAnimationFrame ||
-                            function(func) { setTimeout(func, 1000 / FPS); }
 
 function handleMovement(player) {
   if(player.movingForward){
@@ -243,13 +239,16 @@ function handleMovement(player) {
   player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height-player.radius : player.y;
 }
 
+var requestAnimationFrame = window.requestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            function(func) { setTimeout(func, 1000 / FPS); }
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
   handleMovement(player);
 
   ctx.save();
-  ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
   ctx.restore();
