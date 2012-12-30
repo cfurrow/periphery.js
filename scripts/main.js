@@ -7,7 +7,6 @@ var width  = 0;
 var height = 0;
 var scene  = []
 var fillWindow = fillWindow === false ? false : true;
-var shadows = true;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -83,7 +82,7 @@ function drawPlayer(ctx,player){
   var y = player.y;
   var direction = player.direction;
 
-  ctx.globalCompositeOperation = 'desination-over';
+  //ctx.globalCompositeOperation = 'desination-over';
   ctx.beginPath();
   ctx.fillStyle = "#ffffff";
   ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
@@ -96,11 +95,11 @@ function drawPlayer(ctx,player){
   ctx.fill();
   ctx.closePath();
 
-  ctx.globalCompositeOperation = 'darker';
+  ctx.globalCompositeOperation = 'xor';
   drawPeripheryVision(ctx,player);
 
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = 'xor';
   drawCentralVision(ctx,player);
   ctx.restore();
 }
@@ -135,7 +134,7 @@ function drawPeripheryVision(ctx,player){
 function drawCentralVision(ctx,player) {
   ctx.beginPath();
 
-  ctx.fillStyle = "rgba(200,200,200,0.5)";
+  ctx.fillStyle = "rgba(200,200,200,0.9)";
   ctx.moveTo(player.x,player.y);
 
   player.central = [];
@@ -250,8 +249,7 @@ function frame(){
   handleMovement(player);
 
   ctx.save();
-
-  //ctx.globalCompositeOperation = 'destination-over';
+  ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
   ctx.restore();
