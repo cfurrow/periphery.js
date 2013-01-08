@@ -36,7 +36,7 @@ var MovingCircle = function(x,y,r,fill){
       this.movingup = true;
       this.movingdown = false;
     }
-  }
+  };
 
   this.draw = function(player){
     this.move();
@@ -47,6 +47,6 @@ var MovingCircle = function(x,y,r,fill){
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-  }
-}
+  };
+};
 MovingCircle.prototype = new Circle();
