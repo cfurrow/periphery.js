@@ -1,9 +1,10 @@
-var Rectangle = function(x,y,w,h,fill){
+var Rectangle = function(x,y,w,h,fill,shadows){
   Shape.apply(this,arguments);
   this.width     = w;
   this.height    = h;
   this.fillStyle = fill;
   this.points    = [];
+  this.shadows   = shadows;
 
   this.storePoints = function(){
     this.points = []; 
@@ -13,14 +14,15 @@ var Rectangle = function(x,y,w,h,fill){
     this.points.push(this.x,this.y+this.height);
   };
 
-  this.draw = function(player){
+  this.draw = function(player,shadows){
+    this.shadows = shadows;
     ctx.save();
     ctx.fillStyle = this.fillStyle;
     this.storePoints();
     ctx.fillRect(this.x,this.y,this.width,this.height);
     ctx.restore();
 
-    if(shadows){
+    if(this.shadows){
       var xx, yy;
       ctx.strokeStyle = ctx.fillStyle =  '#000000';
       // Need a mathematical way to "pick the extreme" edges/points, and then create the shadow poly.

@@ -1,13 +1,13 @@
-var canvas = document.getElementById('c');
-var ctx    = canvas.getContext('2d');
-var img    = document.createElement('IMG');
-var radius = 10;
-var FPS    = 60;
-var width  = 0;
-var height = 0;
-var scene  = []
-var fillWindow = fillWindow === false ? false : true;
-var shadows = true;
+var canvas        = document.getElementById('c');
+var ctx           = canvas.getContext('2d');
+var img           = document.createElement('IMG');
+var playerRadius        = 10;
+var FPS           = 60;
+var width         = 0;
+var height        = 0;
+var scene         = []
+var fillWindow    = fillWindow === false ? false : true;
+var enableShadows = true;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -17,11 +17,11 @@ width         = canvas.width;
 height        = canvas.height;
 
 var player = {
-  x:width/2-radius, 
-  y:height/2-radius, 
+  x:width/2-playerRadius, 
+  y:height/2-playerRadius, 
   direction:deg2rad(191),
   visionRadius: canvas.width*2,
-  radius:radius,
+  radius:playerRadius,
   velocity:3,
   turningLeft:false,
   turningRight:false,
@@ -50,6 +50,7 @@ function distanceToClosestWallX(x,direction)
   }
   return x;
 }
+
 function distanceToClosestWallY(y,direction){
   if( deg2rad(direction) > deg2rad(235) && deg2rad(direction) < deg2rad(315)){
     return 0;
@@ -121,13 +122,13 @@ function drawPlayer(ctx,player){
 
   ctx.beginPath();
   ctx.fillStyle = "#ffffff";
-  ctx.arc(x,y, radius+2, 0, Math.PI*2, false);
+  ctx.arc(x,y, playerRadius+2, 0, Math.PI*2, false);
   ctx.fill();
   ctx.closePath();
 
   ctx.beginPath();
   ctx.fillStyle = "#5e9fd2";
-  ctx.arc(x,y, radius, 0, Math.PI*2, false);
+  ctx.arc(x,y, playerRadius, 0, Math.PI*2, false);
   ctx.fill();
   ctx.closePath();
 
@@ -140,12 +141,11 @@ function drawPlayer(ctx,player){
   ctx.restore();
 }
 
-
 function drawScene(player){
   var i = 0;
   var len = scene.length;
   for(;i<len;i++){
-    scene[i].draw(player);
+    scene[i].draw(player,enableShadows);
   }
 }
 
@@ -186,6 +186,9 @@ document.onkeyup = function(e){
   }
   if(e.which==39){
     player.turningRight = false;
+  }
+  if(e.which == 83){ // S
+    enableShadows = !enableShadows;
   }
   return false; // don't bubble event
 }
