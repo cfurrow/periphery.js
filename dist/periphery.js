@@ -1,4 +1,4 @@
-/*! Periphery.js - v0.1.0 - 2013-01-08
+/*! Periphery.js - v0.1.0 - 2013-01-09
 * http://cfurrow.github.com/periphery.js
 * Copyright (c) 2013 Carl Furrow; Licensed MIT */
 
@@ -16,12 +16,8 @@ var Shape = function(px,py){
   this.draw = function(){};
 };
 
-var Rectangle = function(x,y,w,h,fill,exports){
-  this.Shape = exports.Shape;
-  this.ctx   = exports.ctx;
-  this.distanceToClosestWallY = exports.distanceToClosestWallY;
-  this.distanceToClosestWallX = exports.distanceToClosestWallX;
-  this.Shape.apply(this,arguments);
+var Rectangle = function(x,y,w,h,fill){
+  Shape.apply(this,arguments);
   this.width     = w;
   this.height    = h;
   this.fillStyle = fill;
@@ -38,35 +34,35 @@ var Rectangle = function(x,y,w,h,fill,exports){
 
   this.draw = function(player,shadows){
     this.shadows = shadows;
-    this.ctx.save();
-    this.ctx.fillStyle = this.fillStyle;
+    ctx.save();
+    ctx.fillStyle = this.fillStyle;
     this.storePoints();
-    this.ctx.fillRect(this.x,this.y,this.width,this.height);
-    this.ctx.restore();
+    ctx.fillRect(this.x,this.y,this.width,this.height);
+    ctx.restore();
 
     if(this.shadows){
       var xx, yy;
-      this.ctx.strokeStyle = this.ctx.fillStyle =  '#000000';
+      ctx.strokeStyle = ctx.fillStyle =  '#000000';
       // Need a mathematical way to "pick the extreme" edges/points, and then create the shadow poly.
       // - Could I create a circle that has edges that touch the extremes? Centered in shape, then find tangent lines?
       //     - Would need: middle x,y of shape, radius of circle
       //     
 
-      this.ctx.beginPath();
-      this.ctx.moveTo(this.x,this.y);
+      ctx.beginPath();
+      ctx.moveTo(this.x,this.y);
       //xx = this.x + player.visionRadius * Math.cos(player.direction);
       //yy = this.y + player.visionRadius * Math.sin(player.direction);
-      xx = this.x + this.distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y + this.distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      this.ctx.lineTo(xx,yy);
+      xx = this.x + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = this.y + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
       //ctx.closePath();
       //ctx.stroke();
 
       //ctx.beginPath();
       //ctx.moveTo(this.x+this.width,this.y);
-      xx = (this.x+this.width) + this.distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y              + this.distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      this.ctx.lineTo(xx,yy);
+      xx = (this.x+this.width) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
+      yy = this.y              + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
+      ctx.lineTo(xx,yy);
       //ctx.closePath();
       //ctx.stroke();
 
@@ -76,7 +72,7 @@ var Rectangle = function(x,y,w,h,fill,exports){
       //yy = (this.y+this.height) + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
       xx = this.x+this.width;
       yy = this.y+this.height;
-      this.ctx.lineTo(xx,yy);
+      ctx.lineTo(xx,yy);
       //ctx.closePath();
       //ctx.stroke();
 
@@ -86,9 +82,9 @@ var Rectangle = function(x,y,w,h,fill,exports){
       //yy = (this.y+this.height) + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
       xx = this.x;
       yy = this.y+this.height;
-      this.ctx.lineTo(xx,yy);
-      this.ctx.closePath();
-      this.ctx.fill();
+      ctx.lineTo(xx,yy);
+      ctx.closePath();
+      ctx.fill();
     }
   };
 };
@@ -111,7 +107,7 @@ var Circle   = function(x,y,r,fill){
 };
 Circle.prototype    = new Shape();
 
-var MovingCircle = function(x,y,r,fill){
+var MovingCircle = function(x,y,r,fill,exports){
   Circle.apply(this,arguments);
   this.velocity = 5;
   this.movingdown  = false;
@@ -179,6 +175,7 @@ if(fillWindow){
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 }
+
 width         = canvas.width;
 height        = canvas.height;
 
@@ -197,11 +194,11 @@ var player = {
   central:  [[0,0],[0,0],[0,0]]
 };
 
-scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)',this));
-scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)',this));
-scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)',this));
-scene.push(new Circle(90,300,30,'rgb(255,100,0)',this));
-scene.push(new MovingCircle(90,300,30,'rgb(10,200,250)',this));
+scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
+scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
+scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)'));
+scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
+scene.push(new MovingCircle(90,300,30,'rgb(10,200,250)'));
 
 function distanceToClosestWallX(x,direction)
 {

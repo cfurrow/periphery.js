@@ -13,6 +13,7 @@ if(fillWindow){
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 }
+
 width         = canvas.width;
 height        = canvas.height;
 
@@ -31,11 +32,11 @@ var player = {
   central:  [[0,0],[0,0],[0,0]]
 };
 
-scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)',this));
-scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)',this));
-scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)',this));
-scene.push(new Circle(90,300,30,'rgb(255,100,0)',this));
-scene.push(new MovingCircle(90,300,30,'rgb(10,200,250)',this));
+scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
+scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
+scene.push(new Rectangle(500,10,90,90,'rgb(0,0,255)'));
+scene.push(new Circle(90,300,30,'rgb(255,100,0)'));
+scene.push(new MovingCircle(90,300,30,'rgb(10,200,250)'));
 
 function distanceToClosestWallX(x,direction)
 {
