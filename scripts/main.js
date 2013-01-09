@@ -147,7 +147,7 @@ function drawScene(player){
   var i = 0;
   var len = scene.length;
   for(;i<len;i++){
-    scene[i].draw(player,enableShadows);
+    scene[i].draw();
   }
 }
 

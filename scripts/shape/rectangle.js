@@ -1,4 +1,4 @@
-/*global Shape:false, ctx:false distanceToClosestWallY:false distanceToClosestWallX:false */
+/*global Shape:false, ctx:false distanceToClosestWallY:false distanceToClosestWallX:false player:false enableShadows:false*/
 var Rectangle = Rectangle || {};
 
 Rectangle = function(x,y,w,h,fill){
@@ -7,7 +7,7 @@ Rectangle = function(x,y,w,h,fill){
   this.height    = h;
   this.fillStyle = fill;
   this.points    = [];
-  this.shadows   = false;
+  this.enableShadows   = false;
 
   this.storePoints = function(){
     this.points = []; 
@@ -17,15 +17,10 @@ Rectangle = function(x,y,w,h,fill){
     this.points.push(this.x,this.y+this.height);
   };
 
-  this.draw = function(player,shadows){
-    this.shadows = shadows;
-    ctx.save();
-    ctx.fillStyle = this.fillStyle;
+  this.draw = function(){
     this.storePoints();
-    ctx.fillRect(this.x,this.y,this.width,this.height);
-    ctx.restore();
 
-    if(this.shadows){
+    if(enableShadows){
       var xx, yy;
       ctx.strokeStyle = ctx.fillStyle =  '#000000';
       // Need a mathematical way to "pick the extreme" edges/points, and then create the shadow poly.
@@ -71,6 +66,11 @@ Rectangle = function(x,y,w,h,fill){
       ctx.closePath();
       ctx.fill();
     }
+
+    ctx.save();
+    ctx.fillStyle = this.fillStyle;
+    ctx.fillRect(this.x,this.y,this.width,this.height);
+    ctx.restore();
   };
 };
 Rectangle.prototype = new Shape();
