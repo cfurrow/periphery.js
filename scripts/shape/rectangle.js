@@ -19,7 +19,15 @@ Rectangle = function(x,y,w,h,fill){
 
   this.draw = function(){
     this.storePoints();
+    this.drawShadows();
 
+    ctx.save();
+    ctx.fillStyle = this.fillStyle;
+    ctx.fillRect(this.x,this.y,this.width,this.height);
+    ctx.restore();
+  };
+
+  this.drawShadows = function(){
     if(enableShadows){
       var xx, yy;
       ctx.strokeStyle = ctx.fillStyle =  '#000000';
@@ -66,11 +74,6 @@ Rectangle = function(x,y,w,h,fill){
       ctx.closePath();
       ctx.fill();
     }
-
-    ctx.save();
-    ctx.fillStyle = this.fillStyle;
-    ctx.fillRect(this.x,this.y,this.width,this.height);
-    ctx.restore();
   };
 };
 Rectangle.prototype = new Shape();
