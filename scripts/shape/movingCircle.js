@@ -1,3 +1,4 @@
+/*global Circle:false ctx:false */
 var MovingCircle = function(x,y,r,fill,exports){
   Circle.apply(this,arguments);
   this.velocity = 5;

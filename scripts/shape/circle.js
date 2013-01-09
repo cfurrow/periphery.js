@@ -1,3 +1,4 @@
+/*global Shape:false ctx:false */
 var Circle   = function(x,y,r,fill){
   Shape.apply(this,arguments);
   this.radius    = r;

@@ -16,7 +16,10 @@ var Shape = function(px,py){
   this.draw = function(){};
 };
 
-var Rectangle = function(x,y,w,h,fill){
+/*global Shape:false, ctx:false distanceToClosestWallY:false distanceToClosestWallX:false */
+var Rectangle = Rectangle || {};
+
+Rectangle = function(x,y,w,h,fill){
   Shape.apply(this,arguments);
   this.width     = w;
   this.height    = h;
@@ -90,6 +93,7 @@ var Rectangle = function(x,y,w,h,fill){
 };
 Rectangle.prototype = new Shape();
 
+/*global Shape:false ctx:false */
 var Circle   = function(x,y,r,fill){
   Shape.apply(this,arguments);
   this.radius    = r;
@@ -107,6 +111,7 @@ var Circle   = function(x,y,r,fill){
 };
 Circle.prototype    = new Shape();
 
+/*global Circle:false ctx:false */
 var MovingCircle = function(x,y,r,fill,exports){
   Circle.apply(this,arguments);
   this.velocity = 5;
@@ -160,6 +165,7 @@ var MovingCircle = function(x,y,r,fill,exports){
 };
 MovingCircle.prototype = new Circle();
 
+/*global deg2rad:false rad2deg:false Rectangle:false Circle:false MovingCircle:false */
 var canvas        = document.getElementById('c');
 var ctx           = canvas.getContext('2d');
 var img           = document.createElement('IMG');

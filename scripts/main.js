@@ -1,3 +1,4 @@
+/*global deg2rad:false rad2deg:false Rectangle:false Circle:false MovingCircle:false */
 var canvas        = document.getElementById('c');
 var ctx           = canvas.getContext('2d');
 var img           = document.createElement('IMG');

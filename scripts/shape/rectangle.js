@@ -1,4 +1,7 @@
-var Rectangle = function(x,y,w,h,fill){
+/*global Shape:false, ctx:false distanceToClosestWallY:false distanceToClosestWallX:false */
+var Rectangle = Rectangle || {};
+
+Rectangle = function(x,y,w,h,fill){
   Shape.apply(this,arguments);
   this.width     = w;
   this.height    = h;
