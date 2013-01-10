@@ -23,38 +23,6 @@ Rectangle = function(x,y,w,h,fill){
     ctx.fillStyle = this.fillStyle;
     ctx.fillRect(this.x,this.y,this.width,this.height);
     ctx.restore();
-    this.drawShadows();
-  };
-
-  this.drawShadows = function(){
-    if(enableShadows){
-      var xx, yy;
-      ctx.strokeStyle = ctx.fillStyle =  '#000000';
-      // Need a mathematical way to "pick the extreme" edges/points, and then create the shadow poly.
-      // - Could I create a circle that has edges that touch the extremes? Centered in shape, then find tangent lines?
-      //     - Would need: middle x,y of shape, radius of circle
-
-      ctx.beginPath();
-      ctx.moveTo(this.x,this.y);
-
-      xx = this.x + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      ctx.lineTo(xx,yy);
-
-      xx = (this.x+this.width) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y              + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      ctx.lineTo(xx,yy);
-
-      xx = this.x+this.width;
-      yy = this.y+this.height;
-      ctx.lineTo(xx,yy);
-
-      xx = this.x;
-      yy = this.y+this.height;
-      ctx.lineTo(xx,yy);
-      ctx.closePath();
-      ctx.fill();
-    }
   };
 };
 Rectangle.prototype = new Shape();

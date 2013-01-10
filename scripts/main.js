@@ -8,7 +8,6 @@ var FPS           = 60;
 var width         = 0;
 var height        = 0;
 var scene         = [];
-var fillWindow    = fillWindow === false ? false : true;
 var enableShadows = false;
 // Illuminated code
 var Vec2            = illuminated.Vec2;
@@ -16,10 +15,6 @@ var Lamp            = illuminated.Lamp;
 var Lighting        = illuminated.Lighting;
 var lighting        = null;
 
-if(fillWindow){
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
 
 width         = canvas.width;
 height        = canvas.height;
@@ -39,8 +34,8 @@ var player = {
   central:  [[0,0],[0,0],[0,0]],
   light: new Lamp({
     position: new Vec2(200, 150),
-    distance: 300,
-    radius: 1,
+    distance: 450,
+    radius: 30,
     samples: 50
   })
 };
@@ -208,16 +203,6 @@ document.onkeyup = function(e){
   return false; // don't bubble event
 };
 
-window.onresize = function(){
-  if(fillWindow){
-    canvas.height = window.innerHeight;
-    canvas.width  = window.innerWidth; 
-    width  = canvas.width;
-    height = canvas.height;
-    player.visionRadius = canvas.width*2;
-  }
-};
-
 
 function handleMovement(player) {
   if(player.movingForward){
@@ -251,25 +236,33 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             function(func) { setTimeout(func, 1000 / FPS); };
+lighting = new Lighting({
+            light: player.light,
+            objects: scene
+          });
+
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
   handleMovement(player);
 
   ctx.save();
-  //ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
-  lighting = new Lighting({
-              light: player.light,
-              objects: scene
-            });
+
+  lighting.light   = player.light;
+  lighting.objects = scene;
   lighting.compute(canvas.width, canvas.height);
   lighting.render(ctx);
 
   ctx.restore();
 
+
   requestAnimationFrame(frame);
 }
+lighting = new Lighting({
+            light: player.light,
+            objects: scene
+          });
 requestAnimationFrame(frame);
 

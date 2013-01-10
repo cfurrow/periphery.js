@@ -1392,38 +1392,6 @@ Rectangle = function(x,y,w,h,fill){
     ctx.fillStyle = this.fillStyle;
     ctx.fillRect(this.x,this.y,this.width,this.height);
     ctx.restore();
-    this.drawShadows();
-  };
-
-  this.drawShadows = function(){
-    if(enableShadows){
-      var xx, yy;
-      ctx.strokeStyle = ctx.fillStyle =  '#000000';
-      // Need a mathematical way to "pick the extreme" edges/points, and then create the shadow poly.
-      // - Could I create a circle that has edges that touch the extremes? Centered in shape, then find tangent lines?
-      //     - Would need: middle x,y of shape, radius of circle
-
-      ctx.beginPath();
-      ctx.moveTo(this.x,this.y);
-
-      xx = this.x + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      ctx.lineTo(xx,yy);
-
-      xx = (this.x+this.width) + distanceToClosestWallX(this.x,player.direction) * Math.cos(player.direction);
-      yy = this.y              + distanceToClosestWallY(this.y,player.direction) * Math.sin(player.direction);
-      ctx.lineTo(xx,yy);
-
-      xx = this.x+this.width;
-      yy = this.y+this.height;
-      ctx.lineTo(xx,yy);
-
-      xx = this.x;
-      yy = this.y+this.height;
-      ctx.lineTo(xx,yy);
-      ctx.closePath();
-      ctx.fill();
-    }
   };
 };
 Rectangle.prototype = new Shape();
@@ -1528,7 +1496,7 @@ var FPS           = 60;
 var width         = 0;
 var height        = 0;
 var scene         = [];
-var fillWindow    = fillWindow === false ? false : true;
+var fillWindow    = false;//fillWindow === false ? false : true;
 var enableShadows = false;
 // Illuminated code
 var Vec2            = illuminated.Vec2;
@@ -1559,8 +1527,8 @@ var player = {
   central:  [[0,0],[0,0],[0,0]],
   light: new Lamp({
     position: new Vec2(200, 150),
-    distance: 300,
-    radius: 1,
+    distance: 450,
+    radius: 30,
     samples: 50
   })
 };
@@ -1771,25 +1739,33 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             function(func) { setTimeout(func, 1000 / FPS); };
+lighting = new Lighting({
+            light: player.light,
+            objects: scene
+          });
+
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
   handleMovement(player);
 
   ctx.save();
-  //ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
-  lighting = new Lighting({
-              light: player.light,
-              objects: scene
-            });
+
+  lighting.light   = player.light;
+  lighting.objects = scene;
   lighting.compute(canvas.width, canvas.height);
   lighting.render(ctx);
 
   ctx.restore();
 
+
   requestAnimationFrame(frame);
 }
+lighting = new Lighting({
+            light: player.light,
+            objects: scene
+          });
 requestAnimationFrame(frame);
 
