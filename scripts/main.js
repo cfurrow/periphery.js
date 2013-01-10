@@ -39,7 +39,9 @@ var player = {
   central:  [[0,0],[0,0],[0,0]],
   light: new Lamp({
     position: new Vec2(200, 150),
-    distance: 200
+    distance: 300,
+    radius: 1,
+    samples: 50
   })
 };
 
