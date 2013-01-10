@@ -1496,7 +1496,6 @@ var FPS           = 60;
 var width         = 0;
 var height        = 0;
 var scene         = [];
-var fillWindow    = false;//fillWindow === false ? false : true;
 var enableShadows = false;
 // Illuminated code
 var Vec2            = illuminated.Vec2;
@@ -1504,10 +1503,6 @@ var Lamp            = illuminated.Lamp;
 var Lighting        = illuminated.Lighting;
 var lighting        = null;
 
-if(fillWindow){
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
 
 width         = canvas.width;
 height        = canvas.height;
@@ -1528,7 +1523,7 @@ var player = {
   light: new Lamp({
     position: new Vec2(200, 150),
     distance: 450,
-    radius: 30,
+    radius: 10,
     samples: 50
   })
 };
@@ -1694,16 +1689,6 @@ document.onkeyup = function(e){
     enableShadows = !enableShadows;
   }
   return false; // don't bubble event
-};
-
-window.onresize = function(){
-  if(fillWindow){
-    canvas.height = window.innerHeight;
-    canvas.width  = window.innerWidth; 
-    width  = canvas.width;
-    height = canvas.height;
-    player.visionRadius = canvas.width*2;
-  }
 };
 
 
