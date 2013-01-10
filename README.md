@@ -5,3 +5,7 @@ Central vision field, plus peripheral vision proof of concept in HTML5 and a 2D 
 
 Objects in the "periphery" are darker than those in the central vision
 area.
+
+# Libraries used:
+
+* [illuminated.js](https://github.com/gre/illuminated.js) : light and shadows
