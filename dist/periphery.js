@@ -1503,7 +1503,6 @@ var Lamp            = illuminated.Lamp;
 var Lighting        = illuminated.Lighting;
 var lighting        = null;
 
-
 width         = canvas.width;
 height        = canvas.height;
 
@@ -1745,12 +1744,7 @@ function frame(){
 
   ctx.restore();
 
-
   requestAnimationFrame(frame);
 }
-lighting = new Lighting({
-            light: player.light,
-            objects: scene
-          });
 requestAnimationFrame(frame);
 
