@@ -1,4 +1,5 @@
-/*global Circle:false ctx:false */
+/*global Circle:false ctx:false illuminated: false*/
+var Vec2            = illuminated.Vec2;
 var MovingCircle = function(x,y,r,fill,exports){
   Circle.apply(this,arguments);
   this.velocity = 5;
@@ -37,6 +38,7 @@ var MovingCircle = function(x,y,r,fill,exports){
       this.movingup = true;
       this.movingdown = false;
     }
+    this.center    = new Vec2(this.x,this.y);
   };
 
   this.draw = function(player){

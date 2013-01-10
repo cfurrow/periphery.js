@@ -1,4 +1,5 @@
-/*global deg2rad:false rad2deg:false Rectangle:false Circle:false MovingCircle:false */
+/*global deg2rad:false rad2deg:false Rectangle:false Circle:false MovingCircle:false illuminated:false*/
+/*laxcomma*/
 var canvas        = document.getElementById('c');
 var ctx           = canvas.getContext('2d');
 var img           = document.createElement('IMG');
@@ -8,7 +9,12 @@ var width         = 0;
 var height        = 0;
 var scene         = [];
 var fillWindow    = fillWindow === false ? false : true;
-var enableShadows = true;
+var enableShadows = false;
+// Illuminated code
+var Vec2            = illuminated.Vec2;
+var Lamp            = illuminated.Lamp;
+var Lighting        = illuminated.Lighting;
+var lighting        = null;
 
 if(fillWindow){
   canvas.width  = window.innerWidth;
@@ -30,8 +36,13 @@ var player = {
   movingForward:false,
   movingBack:false,
   periphery:[[0,0],[0,0],[0,0]],
-  central:  [[0,0],[0,0],[0,0]]
+  central:  [[0,0],[0,0],[0,0]],
+  light: new Lamp({
+    position: new Vec2(200, 150),
+    distance: 200
+  })
 };
+
 
 scene.push(new Rectangle(10,10,50,50,'rgb(255,0,0)'));
 scene.push(new Rectangle(400,400,30,30,'rgb(0,255,0)'));
@@ -231,6 +242,7 @@ function handleMovement(player) {
   player.x = (player.x+player.radius) > ctx.canvas.width ? ctx.canvas.width-player.radius : player.x;
   player.y = (player.y-player.radius) < 0 ? player.radius : player.y;
   player.y = (player.y+player.radius) > ctx.canvas.height ? ctx.canvas.height-player.radius : player.y;
+  player.light.position = new Vec2(player.x,player.y);
 }
 
 var requestAnimationFrame = window.requestAnimationFrame ||
@@ -246,6 +258,12 @@ function frame(){
   //ctx.globalCompositeOperation = 'destination-over';
   drawPlayer(ctx,player);
   drawScene(player);
+  lighting = new Lighting({
+              light: player.light,
+              objects: scene
+            });
+  lighting.compute(canvas.width, canvas.height);
+  lighting.render(ctx);
 
   ctx.restore();
 

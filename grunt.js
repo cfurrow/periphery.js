@@ -20,12 +20,14 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: ['<banner:meta.banner>',
+          'libs/illuminated.js',
           'scripts/util.js',
           'scripts/shape/shape.js',
           'scripts/shape/rectangle.js',
           'scripts/shape/circle.js',
           'scripts/shape/movingCircle.js',
-          'scripts/main.js'],
+          'scripts/main.js'
+        ],
         dest: 'dist/periphery.js'
       }
     },
