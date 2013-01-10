@@ -269,10 +269,6 @@ function frame(){
 
   ctx.restore();
 
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '20pt Helvetica';
-  ctx.fillText(rad2deg(player.direction),10,20);
-
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
