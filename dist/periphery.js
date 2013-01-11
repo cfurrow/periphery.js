@@ -1,4 +1,4 @@
-/*! Periphery.js - v0.1.0 - 2013-01-09
+/*! Periphery.js - v0.1.0 - 2013-01-10
 * http://cfurrow.github.com/periphery.js
 * Copyright (c) 2013 Carl Furrow; Licensed MIT */
 
@@ -1501,7 +1501,9 @@ var enableShadows = false;
 var Vec2            = illuminated.Vec2;
 var Lamp            = illuminated.Lamp;
 var Lighting        = illuminated.Lighting;
+var DarkMask        = illuminated.DarkMask;
 var lighting        = null;
+var darkmask        = null;
 
 width         = canvas.width;
 height        = canvas.height;
@@ -1521,9 +1523,9 @@ var player = {
   central:  [[0,0],[0,0],[0,0]],
   light: new Lamp({
     position: new Vec2(200, 150),
-    distance: 450,
+    distance: 350,
     radius: 10,
-    samples: 50
+    samples: 1
   })
 };
 
@@ -1727,6 +1729,10 @@ lighting = new Lighting({
             light: player.light,
             objects: scene
           });
+darkmask = new DarkMask({
+             lights: [player.light],
+             color: 'rgba(0,0,0,1)'
+           });
 
 function frame(){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
@@ -1737,12 +1743,18 @@ function frame(){
   drawPlayer(ctx,player);
   drawScene(player);
 
-  lighting.light   = player.light;
-  lighting.objects = scene;
+  player.light.angle = player.direction;
+  lighting.light     = player.light;
+  lighting.objects   = scene;
+
   lighting.compute(canvas.width, canvas.height);
   lighting.render(ctx);
 
+
   ctx.restore();
+  darkmask.lights = [player.light];
+  darkmask.compute(canvas.width,canvas.height);
+  darkmask.render(ctx);
 
   requestAnimationFrame(frame);
 }
